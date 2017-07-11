@@ -8,10 +8,21 @@ public class PinBehaviour : MonoBehaviour {
 	private bool isConnected = false;
 
 	private float distanceToCamera;
+    private Connector connectorScript;
+    private bool snapped = false;
 	// Use this for initialization
 	void Start ()
 	{
-		
+        for(int i = 0; i < gameObject.GetComponent<Transform>().childCount; i++)
+        {
+            GameObject child = gameObject.GetComponent<Transform>().GetChild(i).gameObject;
+            if(child.name == "LeftConnector")
+            {
+                Debug.Log("Child Name is = " + child.name);
+                connectorScript = child.GetComponent<Connector>();
+                break;
+            }
+        }
 	}
 	
 	// Update is called once per frame
@@ -23,6 +34,11 @@ public class PinBehaviour : MonoBehaviour {
 			Vector2 rayHit = mouseRay.GetPoint(distanceToCamera);
 			gameObject.transform.position = rayHit;
 		}
+        else if(!IsBeingDragged && !snapped && isConnected)
+        {
+            gameObject.GetComponent<Transform>().position = connectorScript.SnappingPoint;
+            snapped = true;
+        }
 	}
 
 	public bool IsConnected

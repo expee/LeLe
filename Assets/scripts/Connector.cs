@@ -6,15 +6,31 @@ public class Connector : MonoBehaviour {
 
 	private bool isConnected = false;
 	private PinBehaviour parentPinScript;
+    private GameObject parentPin;
+
+    private Vector3 snappingPoint;
 	// Use this for initialization
 	void Start () {
-		parentPinScript = gameObject.transform.parent.GetComponent<PinBehaviour>();
-	}
+		parentPinScript = gameObject.GetComponent<Transform>().parent.GetComponent<PinBehaviour>();
+        parentPin= gameObject.GetComponent<Transform>().parent.gameObject;
+    }
 	
 	// Update is called once per frame
 	void Update () {
 		
 	}
+
+    public Vector3 SnappingPoint
+    {
+        get
+        {
+            return snappingPoint;
+        }
+        set
+        {
+            snappingPoint = value;
+        }
+    }
 
 	public bool IsConnected
 	{
@@ -40,7 +56,25 @@ public class Connector : MonoBehaviour {
 				RCon.IsConnected = true;
 				parentPinScript.IsConnected = true;
 				Debug.Log("Konek!!");
-			}
+                GameObject othersParent = other.transform.parent.gameObject;
+                Debug.Log("Collider size = " + othersParent.GetComponent<Collider>().bounds.size);
+                snappingPoint = SetParentPosition(othersParent);
+            }
 		}
 	}
+
+    private Vector3 SetParentPosition (GameObject otherObject)
+    {
+        Vector3 othersSize = otherObject.GetComponent<Collider>().bounds.size;
+        Vector3 othersPos = otherObject.GetComponent<Transform>().position;
+        Vector3 parentPos = parentPin.GetComponent<Transform>().position;
+        Vector3 parentSize = parentPin.GetComponent<Collider>().bounds.size;
+
+        Vector3 snappingPos = new Vector3(
+            othersPos.x + (othersSize.x / 2) + parentSize.x / 2,
+            othersPos.y + (othersSize.y / 2) - parentSize.y / 2,
+            othersPos.z
+            );
+        return snappingPos;
+    }
 }

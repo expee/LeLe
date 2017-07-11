@@ -33,12 +33,15 @@ public class Button : MonoBehaviour
 		pinScript = clonedPin.GetComponent<PinBehaviour>();
 		pinScript.IsBeingDragged = true;
 
-		clonedPin.SetActive(true);
+		//clonedPin.SetActive(true);
 	}
 
 	private void OnMouseUp()
 	{
 		pinScript.IsBeingDragged = false;
-		Destroy(clonedPin);
+        if (!pinScript.IsConnected)
+        {
+            Destroy(clonedPin);
+        }
 	}
 }
