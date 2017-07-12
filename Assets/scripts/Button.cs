@@ -9,8 +9,21 @@ public class Button : MonoBehaviour
 
 	private GameObject clonedPin;
 	private PinBehaviour pinScript;
-	// Use this for initialization
-	
+    // Use this for initialization
+    private bool blockSummon = false;
+
+
+    public bool BlockSummon
+    {
+        get
+        {
+            return blockSummon;
+        }
+        set
+        {
+            blockSummon = value;
+        }
+    }
 	void Start ()
 	{
 		
@@ -29,20 +42,23 @@ public class Button : MonoBehaviour
 
 	private void OnMouseDown()
 	{
-		clonedPin = Instantiate(ToDuplicate);
-		//clonedPin.transform.position = GameObject.Find("Pins").transform.localPosition;
-		pinScript = clonedPin.GetComponent<PinBehaviour>();
-		pinScript.IsBeingDragged = true;
-
-		//clonedPin.SetActive(true);
+        if(!blockSummon)
+        {
+            clonedPin = Instantiate(ToDuplicate);
+            pinScript = clonedPin.GetComponent<PinBehaviour>();
+            pinScript.IsBeingDragged = true;
+        }
 	}
 
 	private void OnMouseUp()
 	{
-		pinScript.IsBeingDragged = false;
-        if (!pinScript.IsConnected)
+        if(pinScript != null)
         {
-            Destroy(clonedPin);
+            pinScript.IsBeingDragged = false;
+            if (!pinScript.IsConnected)
+            {
+                Destroy(clonedPin);
+            }
         }
 	}
 }
