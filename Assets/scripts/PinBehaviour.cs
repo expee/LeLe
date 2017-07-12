@@ -10,6 +10,8 @@ public class PinBehaviour : MonoBehaviour {
 	private float distanceToCamera;
     private Connector connectorScript;
     private bool snapped = false;
+
+	private GameObject pointText;
 	// Use this for initialization
 	void Start ()
 	{
@@ -20,8 +22,11 @@ public class PinBehaviour : MonoBehaviour {
             {
                 Debug.Log("Child Name is = " + child.name);
                 connectorScript = child.GetComponent<Connector>();
-                break;
             }
+			else if(child.name == "PointText")
+			{
+				pointText = child;
+			}
         }
 	}
 	
@@ -37,6 +42,7 @@ public class PinBehaviour : MonoBehaviour {
         else if(!IsBeingDragged && !snapped && isConnected)
         {
             gameObject.GetComponent<Transform>().position = connectorScript.SnappingPoint;
+			PointAcquired();
             snapped = true;
         }
 	}
@@ -73,6 +79,28 @@ public class PinBehaviour : MonoBehaviour {
 			{
 				Debug.Log("isBeingDragged-nya " + gameObject.name + " Jadi false Pak!!");
 			}
+		}
+	}
+
+	private void PointAcquired()
+	{
+		pointText.SetActive(true);
+		StartCoroutine("PointTextAnimation", pointText.GetComponent<Transform>().position + Vector3.up);
+		Invoke("DeactivatePointText", 1.5f);
+	}
+
+	void DeactivatePointText()
+	{
+		StopCoroutine("PointTextAnimation");
+		pointText.SetActive(false);
+	}
+
+	IEnumerator PointTextAnimation (Vector3 target)
+	{
+		while(Vector3.Distance(pointText.transform.position,target) > 0.05f)
+		{
+			pointText.transform.position = Vector3.Lerp(pointText.transform.position, target, 2f * Time.deltaTime);
+			yield return null;
 		}
 	}
 }

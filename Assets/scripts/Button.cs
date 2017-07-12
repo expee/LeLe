@@ -10,6 +10,7 @@ public class Button : MonoBehaviour
 	private GameObject clonedPin;
 	private PinBehaviour pinScript;
 	// Use this for initialization
+	
 	void Start ()
 	{
 		
